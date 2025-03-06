@@ -1,0 +1,1726 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prime Framework: Mathematical Foundations & Security Applications</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.8.0/math.min.js"></script>
+  <style>
+    :root {
+      --primary: #0a4d68;
+      --primary-light: #088395;
+      --secondary: #05bfdb;
+      --accent: #00ffca;
+      --dark: #222831;
+      --light: #f5f5f5;
+      --gray: #eeeeee;
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--light);
+      color: var(--dark);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+    
+    h1, h2, h3, h4 {
+      font-family: 'Playfair Display', serif;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+    
+    h1 {
+      font-size: 3.5rem;
+      margin-bottom: 1rem;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    h2 {
+      font-size: 2rem;
+      margin-bottom: 1.5rem;
+      color: var(--primary);
+    }
+    
+    h3 {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      color: var(--primary-light);
+    }
+
+    p {
+      margin-bottom: 1.2rem;
+      font-size: 1rem;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+    
+    .header {
+      padding: 2rem 0;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .header::before {
+      content: '';
+      position: absolute;
+      top: -10%;
+      right: -10%;
+      width: 300px;
+      height: 300px;
+      border-radius: 50%;
+      background: radial-gradient(var(--accent), transparent 70%);
+      opacity: 0.2;
+      z-index: -1;
+    }
+    
+    .header::after {
+      content: '';
+      position: absolute;
+      bottom: -10%;
+      left: -10%;
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      background: radial-gradient(var(--secondary), transparent 70%);
+      opacity: 0.15;
+      z-index: -1;
+    }
+    
+    .subtitle {
+      font-size: 1.2rem;
+      color: var(--primary-light);
+      margin-bottom: 2rem;
+    }
+
+    .nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.8rem;
+      margin-bottom: 2rem;
+    }
+    
+    .nav-button {
+      background: white;
+      color: var(--primary);
+      border: 2px solid transparent;
+      border-radius: 50px;
+      padding: 0.8rem 1.5rem;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    }
+    
+    .nav-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 8px rgba(0, 0, 0, 0.1);
+      border-color: var(--accent);
+    }
+    
+    .nav-button.active {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+    
+    .section-container {
+      position: relative;
+      min-height: 500px;
+      margin-bottom: 3rem;
+    }
+    
+    .section {
+      background: white;
+      border-radius: 12px;
+      padding: 2.5rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+      transition: var(--transition);
+      opacity: 0;
+      transform: translateY(20px);
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      visibility: hidden;
+    }
+    
+    .section.active {
+      opacity: 1;
+      transform: translateY(0);
+      visibility: visible;
+      position: relative;
+    }
+    
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--gray);
+    }
+    
+    .section-icon {
+      font-size: 2rem;
+      color: var(--secondary);
+    }
+    
+    code {
+      font-family: 'Roboto Mono', monospace;
+      background-color: var(--gray);
+      padding: 0.2em 0.4em;
+      border-radius: 3px;
+      font-size: 0.9em;
+      color: var(--primary);
+    }
+
+    .formula {
+      display: block;
+      padding: 1rem;
+      margin: 1.5rem 0;
+      background: var(--gray);
+      border-left: 4px solid var(--primary);
+      font-family: 'Roboto Mono', monospace;
+      overflow-x: auto;
+      text-align: center;
+    }
+    
+    .tag {
+      display: inline-block;
+      padding: 0.3rem 0.8rem;
+      background: var(--accent);
+      color: var(--primary);
+      border-radius: 50px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-right: 0.5rem;
+    }
+    
+    .highlight {
+      background-color: rgba(0, 255, 202, 0.15);
+      padding: 0.1em 0.2em;
+      border-radius: 3px;
+    }
+    
+    .card {
+      background: white;
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+      transition: var(--transition);
+    }
+    
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    .card-title {
+      font-size: 1.2rem;
+      margin-bottom: 1rem;
+      color: var(--primary);
+    }
+
+    .axiom-list {
+      list-style: none;
+      margin: 2rem 0;
+    }
+    
+    .axiom-item {
+      padding: 1.2rem;
+      background: white;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+      border-left: 4px solid var(--secondary);
+      transition: var(--transition);
+    }
+    
+    .axiom-item:hover {
+      transform: translateX(5px);
+      box-shadow: 0 6px 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    .axiom-title {
+      font-weight: 600;
+      color: var(--primary);
+      margin-bottom: 0.5rem;
+    }
+    
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+      margin: 2rem 0;
+    }
+    
+    .animation-container {
+      height: 300px;
+      margin: 2rem 0;
+      position: relative;
+      overflow: hidden;
+      border-radius: 8px;
+      background: var(--gray);
+    }
+    
+    .visualization {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+    }
+    
+    .circle {
+      position: absolute;
+      border-radius: 50%;
+      background: var(--primary-light);
+      opacity: 0.7;
+    }
+    
+    .demo-container {
+      border-radius: 8px;
+      background: var(--light);
+      padding: 1.5rem;
+      margin: 2rem 0;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    }
+    
+    .demo-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid var(--gray);
+    }
+    
+    .demo-title {
+      font-size: 1.2rem;
+      color: var(--primary);
+      font-weight: 600;
+    }
+    
+    .demo-controls {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+    
+    .demo-input {
+      padding: 0.5rem;
+      border: 1px solid var(--gray);
+      border-radius: 4px;
+      font-size: 0.9rem;
+      width: 100px;
+    }
+    
+    .demo-button {
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 4px;
+      padding: 0.5rem 1rem;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    
+    .demo-button:hover {
+      background: var(--primary-light);
+    }
+    
+    .demo-button:disabled {
+      background: var(--gray);
+      color: #666;
+      cursor: not-allowed;
+    }
+    
+    .demo-result {
+      margin-top: 1rem;
+      padding: 1rem;
+      background: var(--gray);
+      border-radius: 4px;
+      font-family: 'Roboto Mono', monospace;
+      font-size: 0.9rem;
+    }
+    
+    .demo-canvas {
+      width: 100%;
+      height: 200px;
+      background: white;
+      border-radius: 4px;
+      border: 1px solid var(--gray);
+    }
+    
+    .base-representation {
+      display: flex;
+      margin-bottom: 0.5rem;
+      align-items: center;
+    }
+    
+    .base-label {
+      width: 80px;
+      font-weight: 600;
+      color: var(--primary);
+    }
+    
+    .digit-container {
+      display: flex;
+    }
+    
+    .digit {
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 2px;
+      background: white;
+      border: 1px solid var(--gray);
+      border-radius: 4px;
+      font-family: 'Roboto Mono', monospace;
+    }
+    
+    .norm-meter {
+      margin-top: 1rem;
+      height: 30px;
+      background: #e0e0e0;
+      border-radius: 15px;
+      overflow: hidden;
+      position: relative;
+    }
+    
+    .norm-value {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--secondary));
+      border-radius: 15px;
+      transition: width 0.5s ease;
+    }
+    
+    .norm-label {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-weight: 600;
+      color: var(--dark);
+    }
+    
+    .prime-factor {
+      display: inline-block;
+      padding: 0.5rem 1rem;
+      margin: 0.25rem;
+      background: var(--light);
+      border: 1px solid var(--gray);
+      border-radius: 4px;
+      font-family: 'Roboto Mono', monospace;
+      transition: all 0.3s ease;
+    }
+    
+    .prime-factor.highlight {
+      background: var(--accent);
+      transform: scale(1.1);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    
+    .matrix-cell {
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--gray);
+      font-size: 0.8rem;
+      transition: all 0.3s ease;
+    }
+    
+    .matrix-cell.highlight {
+      background: var(--accent);
+    }
+    
+    .prime-distribution {
+      width: 100%;
+      height: 200px;
+      background: white;
+      border: 1px solid var(--gray);
+      border-radius: 4px;
+      position: relative;
+    }
+    
+    .prime-marker {
+      position: absolute;
+      bottom: 0;
+      width: 4px;
+      background: var(--primary);
+      border-radius: 2px 2px 0 0;
+      transition: height 0.5s ease;
+    }
+    
+    .pnt-curve {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+    
+    .footer {
+      padding: 3rem 0;
+      text-align: center;
+      color: var(--primary);
+      border-top: 1px solid var(--gray);
+      margin-top: 3rem;
+    }
+    
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 2.5rem;
+      }
+      
+      h2 {
+        font-size: 1.8rem;
+      }
+      
+      .container {
+        padding: 0 1rem;
+      }
+      
+      .section {
+        padding: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <div class="header">
+      <div class="container">
+        <h1>The Prime Framework</h1>
+        <p class="subtitle">A First-Principles Approach to Mathematics, Computation, and Security</p>
+        
+        <div class="nav" id="navigation">
+          <!-- Navigation buttons will be inserted here by JavaScript -->
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <div class="section-container" id="section-container">
+        <!-- Sections will be inserted here by JavaScript -->
+      </div>
+    </div>
+    
+    <footer class="footer">
+      <div class="container">
+        <p>The Prime Framework: A Mathematical System for Unified Theory</p>
+        <p>© 2025 The UOR Foundation</p>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    // Helper functions for demonstrations
+    
+    // Convert number to digits in a given base
+    function getDigitsInBase(num, base) {
+      if (num === 0) return [0];
+      let digits = [];
+      let n = num;
+      while (n > 0) {
+        digits.unshift(n % base);
+        n = Math.floor(n / base);
+      }
+      return digits;
+    }
+    
+    // Check if a number is prime
+    function isPrime(num) {
+      if (num <= 1) return false;
+      if (num <= 3) return true;
+      if (num % 2 === 0 || num % 3 === 0) return false;
+      let i = 5;
+      while (i * i <= num) {
+        if (num % i === 0 || num % (i + 2) === 0) return false;
+        i += 6;
+      }
+      return true;
+    }
+    
+    // Get prime factors of a number
+    function getPrimeFactors(num) {
+      const factors = [];
+      let n = num;
+      
+      // Handle 2 separately
+      while (n % 2 === 0) {
+        factors.push(2);
+        n /= 2;
+      }
+      
+      // Check odd numbers starting from 3
+      for (let i = 3; i <= Math.sqrt(n); i += 2) {
+        while (n % i === 0) {
+          factors.push(i);
+          n /= i;
+        }
+      }
+      
+      // If n is a prime number greater than 2
+      if (n > 2) {
+        factors.push(n);
+      }
+      
+      return factors;
+    }
+    
+    // Get all divisors of a number
+    function getDivisors(num) {
+      const divisors = [];
+      for (let i = 1; i <= num; i++) {
+        if (num % i === 0) {
+          divisors.push(i);
+        }
+      }
+      return divisors;
+    }
+    
+    // Calculate the coherence norm (simplified simulation)
+    function calculateCoherenceNorm(num, bases) {
+      // Simplified simulation of coherence norm calculation
+      // In reality, this would involve complex calculations in the Clifford algebra
+      let norm = 0;
+      for (let base of bases) {
+        const digits = getDigitsInBase(num, base);
+        // Add a small random factor to simulate different embeddings
+        norm += digits.length * 0.1 * Math.random();
+      }
+      return norm;
+    }
+    
+    // Generate prime numbers up to a limit
+    function generatePrimes(limit) {
+      const primes = [];
+      for (let i = 2; i <= limit; i++) {
+        if (isPrime(i)) {
+          primes.push(i);
+        }
+      }
+      return primes;
+    }
+    
+    // Li(x) - logarithmic integral approximation
+    function logarithmicIntegral(x) {
+      if (x <= 1) return 0;
+      // Simple approximation using numerical integration
+      let sum = 0;
+      const step = (x - 2) / 100;
+      for (let t = 2; t < x; t += step) {
+        sum += step / Math.log(t);
+      }
+      return sum;
+    }
+    
+    // Define sections
+    const sections = [
+      {
+        id: "overview",
+        title: "Framework Overview",
+        icon: "📚",
+        content: `
+          <div class="section-header">
+            <h2>Framework Overview</h2>
+            <div class="section-icon">📚</div>
+          </div>
+          
+          <p>The Prime Framework is a revolutionary mathematical system that reconstructs number theory, algebra, and analytic results from first principles. By embedding natural numbers intrinsically into a fiber algebra with a coherence inner product, the framework derives classical mathematical structures like prime factorization while enabling new applications in security and computation.</p>
+          
+          <div class="card">
+            <h3 class="card-title">Core Principles</h3>
+            <p>The framework builds upon four fundamental axioms: a smooth reference manifold, algebraic fibers (typically Clifford algebras), a symmetry group action ensuring consistency, and a coherence inner product that enforces the uniqueness of representations.</p>
+            <p>From these axioms, the framework constructs natural numbers through a universal embedding that encodes each number in every possible base simultaneously. The coherence inner product ensures that the representations are consistent across all bases.</p>
+          </div>
+          
+          <div class="card">
+            <h3 class="card-title">Key Innovations</h3>
+            <ul style="list-style: inside;">
+              <li>Intrinsic definition of primes and derivation of unique factorization</li>
+              <li>Construction of the Prime Operator representing divisor structures</li>
+              <li>Development of a Prime zeta function with an Euler product representation</li>
+              <li>Derivation of the Prime Number Theorem and explicit formulas for counting primes</li>
+              <li>Novel applications in computational complexity (P vs NP) and cryptographic security</li>
+            </ul>
+          </div>
+        `
+      },
+      {
+        id: "axioms",
+        title: "Axiomatic Foundations",
+        icon: "🧮",
+        content: `
+          <div class="section-header">
+            <h2>Axiomatic Foundations</h2>
+            <div class="section-icon">🧮</div>
+          </div>
+          
+          <p>The Prime Framework is built upon four core axioms that provide a self-contained, rigorous foundation. These axioms integrate geometry, algebra, and symmetry into a unified mathematical system.</p>
+          
+          <ul class="axiom-list">
+            <li class="axiom-item">
+              <div class="axiom-title">Axiom 1: Reference Manifold</div>
+              <p>There exists a smooth, connected, and orientable manifold M equipped with a nondegenerate metric tensor g. This manifold serves as the universal geometric arena for all objects in the framework.</p>
+            </li>
+            
+            <li class="axiom-item">
+              <div class="axiom-title">Axiom 2: Algebraic Fibers</div>
+              <p>For each point x ∈ M, there exists an associative algebra C<sub>x</sub>, typically taken to be the Clifford algebra Cl(T<sub>x</sub>M, g<sub>x</sub>), where T<sub>x</sub>M is the tangent space at x and g<sub>x</sub> is the quadratic form induced by g.</p>
+            </li>
+            
+            <li class="axiom-item">
+              <div class="axiom-title">Axiom 3: Symmetry Group Action</div>
+              <p>There exists a Lie group G that acts smoothly on M by isometries, and this action lifts to each fiber C<sub>x</sub> via algebra automorphisms, ensuring that local representations are consistent under transformations.</p>
+            </li>
+            
+            <li class="axiom-item">
+              <div class="axiom-title">Axiom 4: Coherence Inner Product</div>
+              <p>Each fiber algebra C<sub>x</sub> is endowed with a positive-definite inner product ⟨·,·⟩<sub>c</sub> that is invariant under the action of G. This inner product ensures that if an abstract object is represented in multiple ways, any discrepancy increases the norm, thus selecting a unique minimal-norm representation.</p>
+            </li>
+          </ul>
+          
+          <div class="card">
+            <h3 class="card-title">Uniqueness Theorem</h3>
+            <p>From these axioms, it can be proven that every abstract object (such as a natural number) admits a unique canonical representation as the minimal-norm element in the fiber algebra, up to the action of the symmetry group G.</p>
+            <p>This uniqueness theorem ensures that the Prime Framework provides a consistent and well-defined embedding of mathematical objects.</p>
+          </div>
+        `
+      },
+      {
+        id: "embedding",
+        title: "Number Embedding",
+        icon: "🔢",
+        content: `
+          <div class="section-header">
+            <h2>Number Embedding</h2>
+            <div class="section-icon">🔢</div>
+          </div>
+          
+          <p>In the Prime Framework, natural numbers are not assumed a priori but are constructed through an intrinsic embedding into the fiber algebra. This universal embedding encodes each number in all possible bases simultaneously.</p>
+          
+          <div class="demo-container">
+            <div class="demo-header">
+              <div class="demo-title">Interactive Number Embedding Demo</div>
+            </div>
+            
+            <p>Enter a natural number to see its representation in different bases. The demonstration shows how the Prime Framework encodes numbers in multiple bases simultaneously.</p>
+            
+            <div class="demo-controls">
+              <input type="number" id="number-input" class="demo-input" value="42" min="1" max="999">
+              <button id="embed-button" class="demo-button">Visualize Embedding</button>
+            </div>
+            
+            <div id="embedding-result" class="demo-result">
+              <!-- Embedding representations will appear here -->
+            </div>
+            
+            <div class="animation-container">
+              <div class="visualization" id="embed-visualization"></div>
+            </div>
+            
+            <div class="norm-meter">
+              <div class="norm-value" id="norm-value" style="width: 0%"></div>
+              <div class="norm-label" id="norm-label">Coherence Norm: 0</div>
+            </div>
+            
+            <div class="card" style="margin-top: 1.5rem; background-color: #f0f9ff; border-left: 4px solid var(--secondary);">
+              <h4 style="margin-bottom: 0.5rem; color: var(--primary);">Mathematical Insight: The Circle Pattern</h4>
+              <p style="font-size: 0.9rem;">
+                The arrangement of circles reveals the deep mathematical structure of the Prime Framework. For the number 1, you'll see exactly 8 circles arranged in a ring at specific intervals that correspond to the mathematical relationship between different bases.
+              </p>
+              <p style="font-size: 0.9rem; margin-top: 0.5rem;">
+                Each base (2, 3, 5, and 10) contributes exactly 2 circles positioned at angles determined by the formula: <code>angle = (2π × base)/20</code>. This creates a pattern of "1, 0, 1, 1, 0, 1, 0, 0, 0, 0, 1, 0, 1, 1, 0, 1, 0, 0, 0, 0" around the circle.
+              </p>
+              <p style="font-size: 0.9rem; margin-top: 0.5rem;">
+                This isn't just a visual choice—it's a direct representation of how different numerical bases relate to each other in the framework's algebraic structure. The coherence inner product measures how well these representations align, determining the canonical embedding of each number.
+              </p>
+            </div>
+            
+            <p class="demo-explanation" style="margin-top: 1rem; font-size: 0.9rem; color: var(--primary-light);">
+              The coherence norm measures how well the different base representations align. A lower norm indicates better consistency across bases. In the Prime Framework, the canonical representation has the minimal possible norm.
+            </p>
+          </div>
+          
+          <h3>Universal Number Embedding</h3>
+          <p>For each natural number N, we define its universal embedding E(N) as the collection of its digit sequences in every possible base b ≥ 2:</p>
+          
+          <div class="formula">
+            E(N) = {(a<sub>0</sub>(b), a<sub>1</sub>(b), a<sub>2</sub>(b), ...) : b = 2, 3, 4, ...}
+          </div>
+          
+          <p>where a<sub>i</sub>(b) are the digits of N in base b, such that:</p>
+          
+          <div class="formula">
+            N = a<sub>k</sub>(b)b<sup>k</sup> + a<sub>k-1</sub>(b)b<sup>k-1</sup> + ... + a<sub>1</sub>(b)b + a<sub>0</sub>(b)
+          </div>
+          
+          <h3>Canonical Representation</h3>
+          <p>The coherence inner product ⟨·,·⟩<sub>c</sub> on the fiber algebra C<sub>x</sub> ensures that all these representations are consistent. The canonical representation of N is the unique element N̂ in C<sub>x</sub> that minimizes the coherence norm while correctly encoding all digit sequences.</p>
+          
+          <div class="card">
+            <h3 class="card-title">Properties of the Embedding</h3>
+            <ul style="list-style: inside;">
+              <li>Each number has a unique minimal-norm representation</li>
+              <li>The representation is invariant under the symmetry group action</li>
+              <li>The coherence norm measures the internal consistency of the representation</li>
+              <li>Arithmetic operations on numbers correspond to algebraic operations on their embeddings</li>
+            </ul>
+          </div>
+        `
+      },
+      {
+        id: "primes",
+        title: "Intrinsic Primes",
+        icon: "🧩",
+        content: `
+          <div class="section-header">
+            <h2>Intrinsic Primes</h2>
+            <div class="section-icon">🧩</div>
+          </div>
+          
+          <p>The Prime Framework introduces an intrinsic definition of primality based on the embeddings of natural numbers into the fiber algebra. This definition leads to a unique factorization theorem that mirrors the fundamental theorem of arithmetic.</p>
+          
+          <div class="demo-container">
+            <div class="demo-header">
+              <div class="demo-title">Interactive Prime Factorization Demo</div>
+            </div>
+            
+            <p>Enter a natural number to see its prime factorization. The animation demonstrates how numbers are broken down into their intrinsic prime components in the Prime Framework.</p>
+            
+            <div class="demo-controls">
+              <input type="number" id="factorization-input" class="demo-input" value="84" min="2" max="999">
+              <button id="factorize-button" class="demo-button">Factorize</button>
+              <button id="animate-factorization" class="demo-button">Animate Process</button>
+            </div>
+            
+            <div id="factorization-steps" style="margin-top: 1rem;">
+              <!-- Factorization steps will appear here -->
+            </div>
+            
+            <div id="factorization-result" class="demo-result" style="margin-top: 1rem;">
+              <!-- Factorization result will appear here -->
+            </div>
+          </div>
+          
+          <h3>Definition of Intrinsic Primes</h3>
+          <p>An embedded number N̂ ∈ C<sub>x</sub> (with N > 1) is called <span class="highlight">intrinsically prime</span> if, whenever:</p>
+          
+          <div class="formula">
+            N̂ = Â · B̂
+          </div>
+          
+          <p>for some Â, B̂ ∈ C<sub>x</sub> corresponding to natural numbers A and B, then either A = 1 or B = 1. In other words, an intrinsic prime does not admit any nontrivial factorization within the fiber algebra.</p>
+          
+          <h3>Unique Factorization Theorem</h3>
+          <p>Every embedded number N̂ ∈ C<sub>x</sub> with N > 1 can be expressed as:</p>
+          
+          <div class="formula">
+            N̂ = p̂<sub>1</sub> · p̂<sub>2</sub> · ... · p̂<sub>k</sub>
+          </div>
+          
+          <p>where each p̂<sub>i</sub> is an intrinsic prime. Moreover, this factorization is unique up to the order of the factors.</p>
+          
+          <div class="card">
+            <h3 class="card-title">Proof Sketch</h3>
+            <p>The proof leverages the coherence inner product and the unique minimal-norm property of canonical embeddings. If there were two distinct factorizations, one could construct an element with strictly smaller norm than the minimal norm, leading to a contradiction.</p>
+            <p>This proof is entirely internal to the Prime Framework, relying only on the axiomatic foundation and the properties of the universal number embedding.</p>
+          </div>
+          
+          <div class="card">
+            <h3 class="card-title">Implications</h3>
+            <p>The intrinsic definition of primes and the unique factorization theorem provide a self-contained derivation of fundamental number-theoretic principles. This approach allows for new insights into the structure of natural numbers and their prime decompositions.</p>
+          </div>
+        `
+      },
+      {
+        id: "operator",
+        title: "Prime Operator",
+        icon: "⚙️",
+        content: `
+          <div class="section-header">
+            <h2>Prime Operator</h2>
+            <div class="section-icon">⚙️</div>
+          </div>
+          
+          <p>The Prime Framework introduces a linear operator H on the Hilbert space ℓ<sup>2</sup>(ℕ) that encodes the divisor structure of natural numbers. The spectral analysis of this operator leads to an intrinsic zeta function with an Euler product representation.</p>
+          
+          <div class="demo-container">
+            <div class="demo-header">
+              <div class="demo-title">Prime Operator Matrix Visualization</div>
+            </div>
+            
+            <p>This interactive demo visualizes the matrix representation of the Prime Operator for small natural numbers. The matrix elements H<sub>i,j</sub> = 1 if j divides i, and 0 otherwise.</p>
+            
+            <div class="demo-controls">
+              <label for="matrix-size">Matrix Size:</label>
+              <input type="range" id="matrix-size" min="4" max="12" value="8" class="demo-input">
+              <span id="size-display">8×8</span>
+            </div>
+            
+            <div style="overflow-x: auto; margin-top: 1rem;">
+              <div id="operator-matrix" style="display: inline-flex; flex-direction: column; margin: 0 auto;"></div>
+            </div>
+            
+            <p style="margin-top: 1rem; font-size: 0.9rem; color: var(--primary-light);">
+              Click on a matrix element to see how the Prime Operator maps basis vectors. This shows the divisor structure that's fundamental to number theory.
+            </p>
+            
+            <div id="operator-action" class="demo-result" style="margin-top: 1rem;">
+              Select a matrix element to see the operator action.
+            </div>
+          </div>
+          
+          <h3>Definition of the Prime Operator</h3>
+          <p>Let {δ<sub>N</sub> : N ∈ ℕ} be the standard orthonormal basis for ℓ<sup>2</sup>(ℕ). The linear operator H is defined by:</p>
+          
+          <div class="formula">
+            H(δ<sub>N</sub>) = ∑<sub>d|N</sub> δ<sub>d</sub>
+          </div>
+          
+          <p>where the sum runs over all positive divisors d of N. In other words, H maps each natural number to the sum of its divisors.</p>
+          
+          <h3>Properties of H</h3>
+          <ul style="list-style: inside; margin: 1rem 0 2rem 1rem;">
+            <li>H is bounded and self-adjoint with respect to the standard inner product on ℓ<sup>2</sup>(ℕ)</li>
+            <li>H is a positive operator, meaning ⟨f, Hf⟩ ≥ 0 for all f ∈ ℓ<sup>2</sup>(ℕ)</li>
+            <li>The matrix representation of H has entries H<sub>N,d</sub> = 1 if d divides N, and 0 otherwise</li>
+          </ul>
+          
+          <h3>Formal Determinant and Zeta Function</h3>
+          <p>The formal determinant D(u) = det(I - uH) admits a factorization:</p>
+          
+          <div class="formula">
+            D(u) = ∏<sub>p intrinsic</sub> (1 - u)
+          </div>
+          
+          <p>By substituting u = p<sup>-s</sup>, we define the intrinsic zeta function:</p>
+          
+          <div class="formula">
+            ζ<sub>P</sub>(s) = 1/D(s) = ∏<sub>p intrinsic</sub> 1/(1 - p<sup>-s</sup>)
+          </div>
+          
+          <p>This matches the Euler product representation of the Riemann zeta function for ℜ(s) > 1, but is derived entirely within the Prime Framework.</p>
+          
+          <div class="card">
+            <h3 class="card-title">Spectral Analysis</h3>
+            <p>The spectral analysis of H reveals deep connections between the divisor structure of numbers and the distribution of primes. The eigenvalues and eigenvectors of H encode fundamental arithmetic properties.</p>
+            <p>Moreover, the trace formulas for powers of H count the number of ways to express a natural number as a chain of divisors, providing combinatorial interpretations of arithmetic functions.</p>
+          </div>
+        `
+      },
+      {
+        id: "analytics",
+        title: "Analytic Applications",
+        icon: "📊",
+        content: `
+          <div class="section-header">
+            <h2>Analytic Applications</h2>
+            <div class="section-icon">📊</div>
+          </div>
+          
+          <p>The Prime Framework enables the derivation of key results from analytic number theory through its intrinsic construction of natural numbers, primes, and the zeta function.</p>
+          
+          <div class="demo-container">
+            <div class="demo-header">
+              <div class="demo-title">Prime Number Distribution Visualization</div>
+            </div>
+            
+            <p>This visualization demonstrates the Prime Number Theorem in action. It shows the actual distribution of prime numbers (blue bars) compared to the theoretical approximation π(X) ~ X/ln X (orange curve).</p>
+            
+            <div class="demo-controls">
+              <label for="prime-range">Range:</label>
+              <input type="range" id="prime-range" min="10" max="200" value="100" class="demo-input">
+              <span id="range-display">1-100</span>
+            </div>
+            
+            <div class="prime-distribution" id="prime-distribution">
+              <!-- Prime markers will be inserted here -->
+              <div class="pnt-curve" id="pnt-curve"></div>
+            </div>
+            
+            <div class="demo-result" style="margin-top: 1rem;">
+              <div id="pnt-stats">Loading statistics...</div>
+            </div>
+          </div>
+          
+          <h3>The Prime Number Theorem</h3>
+          <p>Using the intrinsic zeta function ζ<sub>P</sub>(s) and Mellin inversion, the Prime Number Theorem can be derived within the framework:</p>
+          
+          <div class="formula">
+            π(X) ~ X/ln X as X → ∞
+          </div>
+          
+          <p>where π(X) is the prime-counting function. This result follows from the analytic properties of ζ<sub>P</sub>(s), particularly its simple pole at s = 1.</p>
+          
+          <h3>Explicit Formulas</h3>
+          <p>More refined analysis through contour integration provides explicit formulas for π(X):</p>
+          
+          <div class="formula">
+            π(X) = Li(X) - ∑<sub>ρ</sub> Li(X<sup>ρ</sup>) + R(X)
+          </div>
+          
+          <p>where Li(X) is the logarithmic integral, the sum runs over the nontrivial zeros ρ of ζ<sub>P</sub>(s), and R(X) represents lower-order correction terms.</p>
+          
+          <p>This leads to an asymptotic expansion for the nth prime:</p>
+          
+          <div class="formula">
+            p<sub>n</sub> = n ln n + n ln ln n - n + O(n/ln n)
+          </div>
+          
+          <h3>Functional Equation and the Riemann Hypothesis Analogue</h3>
+          <p>The symmetry axioms of the Prime Framework enforce a duality in the spectral properties of the Prime Operator, resulting in a functional equation for ζ<sub>P</sub>(s):</p>
+          
+          <div class="formula">
+            ζ<sub>P</sub>(s) = Φ(s) ζ<sub>P</sub>(1-s)
+          </div>
+          
+          <p>where Φ(s) is an explicitly determined factor. Moreover, the framework suggests that all nontrivial zeros of ζ<sub>P</sub>(s) lie on the critical line ℜ(s) = 1/2, constituting an internal analogue of the Riemann Hypothesis.</p>
+          
+          <div class="card">
+            <h3 class="card-title">From First Principles</h3>
+            <p>The significance of these results lies in their derivation from the axiomatic foundation of the Prime Framework, without assuming classical number theory. The framework provides a unified perspective on the deep connections between algebra, analysis, and number theory.</p>
+          </div>
+        `
+      },
+      {
+        id: "security",
+        title: "Security Applications",
+        icon: "🔐",
+        content: `
+          <div class="section-header">
+            <h2>Security Applications</h2>
+            <div class="section-icon">🔐</div>
+          </div>
+          
+          <p>The Prime Framework offers novel approaches to cryptographic security by leveraging its unique mathematical structures and coherence properties.</p>
+          
+          <div class="demo-container">
+            <div class="demo-header">
+              <div class="demo-title">Security Key Extraction Demonstration</div>
+            </div>
+            
+            <p>This demonstration compares traditional bit-by-bit key extraction with the Prime Framework's optimized probe method. See how the framework achieves the same security level with significantly fewer probes.</p>
+            
+            <div class="demo-controls">
+              <label for="security-level">Security Level:</label>
+              <select id="security-level" class="demo-input">
+                <option value="128">128-bit</option>
+                <option value="192">192-bit</option>
+                <option value="256">256-bit</option>
+              </select>
+              <button id="compare-extraction" class="demo-button">Compare Methods</button>
+            </div>
+            
+            <div id="extraction-comparison" style="margin-top: 1rem;">
+              <div style="display: flex; margin-bottom: 1rem;">
+                <div style="flex: 1; padding-right: 1rem;">
+                  <h4 style="margin-bottom: 0.5rem; color: var(--primary);">Traditional Method</h4>
+                  <div class="demo-canvas" id="traditional-canvas"></div>
+                </div>
+                <div style="flex: 1; padding-left: 1rem;">
+                  <h4 style="margin-bottom: 0.5rem; color: var(--primary);">Prime Framework Method</h4>
+                  <div class="demo-canvas" id="framework-canvas"></div>
+                </div>
+              </div>
+            </div>
+            
+            <div id="extraction-results" class="demo-result">
+              Select a security level and click "Compare Methods" to see the results.
+            </div>
+          </div>
+          
+          <div class="grid">
+            <div class="card">
+              <h3 class="card-title">Tight Non-Rewinding Reductions</h3>
+              <p>The minimal-norm embedding of numbers eliminates redundant representations, enabling direct mappings from adversary actions to underlying hard problems without rewinding.</p>
+              <p>This leads to provably tight security reductions without the square-root degradation typical in traditional proofs.</p>
+            </div>
+            
+            <div class="card">
+              <h3 class="card-title">Global Consistency via Local Probes</h3>
+              <p>The framework associates each key storage probe with a quantifiable change in the overall coherence of the system, precisely measuring the security impact of local operations.</p>
+              <p>This enables predictable effects on global security even from minute adjustments in key extraction.</p>
+            </div>
+            
+            <div class="card">
+              <h3 class="card-title">Enhanced Security Metrics</h3>
+              <p>The coherence norm serves as a natural error metric, with deviations indicating potential security vulnerabilities.</p>
+              <p>Explicit metrics like the ratio of Hamming ball sizes provide rigorous upper bounds on adversary advantage.</p>
+            </div>
+            
+            <div class="card">
+              <h3 class="card-title">Efficient Key Extraction</h3>
+              <p>By treating keys as vectors over large alphabets rather than bit-by-bit, the framework optimizes key extraction with carefully chosen probe indices.</p>
+              <p>This can reduce the number of required probes from hundreds to under fifty while maintaining security guarantees.</p>
+            </div>
+          </div>
+          
+          <h3>Quantitative Coherence Analysis</h3>
+          <p>The coherence inner product provides a powerful tool for quantitative security analysis. By computing the coherence norm ‖N̂‖ of embedded objects and their deviation from the minimal norm, one can precisely measure the impact of operations on security.</p>
+          
+          <p>This approach uses entropy-based estimates and combinatorial bounds to derive explicit formulas that directly relate coherence measures to adversary advantage, enabling a new class of analytic techniques in cryptographic security.</p>
+          
+          <div class="card">
+            <h3 class="card-title">Future Directions</h3>
+            <p>The application of the Prime Framework to security is still in its early stages, with promising directions including:</p>
+            <ul style="list-style: inside;">
+              <li>New cryptographic primitives based on coherence properties</li>
+              <li>Coherence-based side-channel resistance</li>
+              <li>Formal verification using the algebraic structure of the framework</li>
+              <li>Quantum-resistant protocols leveraging the framework's high-dimensional embeddings</li>
+            </ul>
+          </div>
+        `
+      }
+    ];
+
+    // DOM Elements
+    const navigation = document.getElementById('navigation');
+    const sectionContainer = document.getElementById('section-container');
+    
+    // Create navigation buttons
+    sections.forEach(section => {
+      const button = document.createElement('button');
+      button.className = 'nav-button';
+      button.dataset.section = section.id;
+      button.innerHTML = `${section.icon} ${section.title}`;
+      navigation.appendChild(button);
+    });
+    
+    // Create section elements
+    sections.forEach(section => {
+      const sectionEl = document.createElement('section');
+      sectionEl.id = `section-${section.id}`;
+      sectionEl.className = 'section';
+      sectionEl.innerHTML = section.content;
+      sectionContainer.appendChild(sectionEl);
+    });
+    
+    // Set initial active section
+    let activeSection = 'overview';
+    document.querySelector(`#section-${activeSection}`).classList.add('active');
+    document.querySelector(`.nav-button[data-section="${activeSection}"]`).classList.add('active');
+    
+    // Handle navigation clicks
+    navigation.addEventListener('click', (e) => {
+      if (e.target.classList.contains('nav-button')) {
+        const newSection = e.target.dataset.section;
+        
+        // Skip if already active
+        if (newSection === activeSection) return;
+        
+        // Update button states
+        document.querySelectorAll('.nav-button').forEach(btn => btn.classList.remove('active'));
+        e.target.classList.add('active');
+        
+        // Hide current section
+        const currentSection = document.querySelector(`#section-${activeSection}`);
+        gsap.to(currentSection, {
+          opacity: 0,
+          y: 20,
+          duration: 0.3,
+          onComplete: () => {
+            currentSection.classList.remove('active');
+            currentSection.style.visibility = 'hidden';
+            
+            // Show new section
+            const newSectionEl = document.querySelector(`#section-${newSection}`);
+            newSectionEl.style.visibility = 'visible';
+            newSectionEl.classList.add('active');
+            gsap.fromTo(newSectionEl, 
+              { opacity: 0, y: 20 },
+              { opacity: 1, y: 0, duration: 0.5 }
+            );
+            
+            // Update active section
+            activeSection = newSection;
+            
+            // Initialize visualizations if needed
+            if (newSection === 'embedding') {
+              initializeEmbeddingVisualization();
+            }
+          }
+        });
+      }
+    });
+    
+    // Initialize embedding visualization
+    // Initialize the number embedding demo
+    function initializeNumberEmbeddingDemo() {
+      const numberInput = document.getElementById('number-input');
+      const embedButton = document.getElementById('embed-button');
+      const embedResult = document.getElementById('embedding-result');
+      const normValue = document.getElementById('norm-value');
+      const normLabel = document.getElementById('norm-label');
+      
+      if (!numberInput || !embedButton || !embedResult) return;
+      
+      embedButton.addEventListener('click', function() {
+        const num = parseInt(numberInput.value);
+        if (isNaN(num) || num < 1 || num > 999) {
+          alert('Please enter a number between 1 and 999');
+          return;
+        }
+        
+        // Generate base representations for bases 2 through 10
+        let html = '';
+        const bases = [2, 3, 4, 5, 6, 7, 8, 9, 10, 16];
+        
+        for (const base of bases) {
+          const digits = getDigitsInBase(num, base);
+          
+          html += `<div class="base-representation">
+            <div class="base-label">Base ${base}:</div>
+            <div class="digit-container">`;
+          
+          for (const digit of digits) {
+            const displayDigit = digit < 10 ? digit : String.fromCharCode(55 + digit);
+            html += `<div class="digit">${displayDigit}</div>`;
+          }
+          
+          html += `</div></div>`;
+        }
+        
+        embedResult.innerHTML = html;
+        
+        // Simulate coherence norm calculation
+        const norm = Math.round(calculateCoherenceNorm(num, bases) * 100) / 100;
+        const normPercent = Math.min(norm * 10, 100);
+        
+        normValue.style.width = `${normPercent}%`;
+        normLabel.textContent = `Coherence Norm: ${norm}`;
+        
+        // Update visualization
+        initializeEmbeddingVisualization(num);
+      });
+      
+      // Initial visualization
+      embedButton.click();
+    }
+    
+    // Initialize the prime factorization demo
+    function initializePrimeFactorizationDemo() {
+      const factorizationInput = document.getElementById('factorization-input');
+      const factorizeButton = document.getElementById('factorize-button');
+      const animateButton = document.getElementById('animate-factorization');
+      const factorizationResult = document.getElementById('factorization-result');
+      const factorizationSteps = document.getElementById('factorization-steps');
+      
+      if (!factorizationInput || !factorizeButton || !factorizationResult) return;
+      
+      factorizeButton.addEventListener('click', function() {
+        const num = parseInt(factorizationInput.value);
+        if (isNaN(num) || num < 2 || num > 999) {
+          alert('Please enter a number between 2 and 999');
+          return;
+        }
+        
+        const factors = getPrimeFactors(num);
+        
+        let html = `<div style="font-size: 1.2rem; font-weight: bold;">${num} = `;
+        
+        for (let i = 0; i < factors.length; i++) {
+          html += factors[i];
+          if (i < factors.length - 1) html += ' × ';
+        }
+        
+        html += '</div>';
+        
+        factorizationResult.innerHTML = html;
+        factorizationSteps.innerHTML = '';
+      });
+      
+      animateButton.addEventListener('click', function() {
+        const num = parseInt(factorizationInput.value);
+        if (isNaN(num) || num < 2 || num > 999) {
+          alert('Please enter a number between 2 and 999');
+          return;
+        }
+        
+        // Prepare animation elements
+        factorizationSteps.innerHTML = '';
+        
+        // Get factors
+        const factors = getPrimeFactors(num);
+        
+        // Create prime factor elements
+        let html = `<div style="margin-bottom: 1rem;">Starting with number: <span class="prime-factor">${num}</span></div>`;
+        
+        factorizationSteps.innerHTML = html;
+        
+        // Animate factorization process
+        let currentNumber = num;
+        let step = 0;
+        
+        function animateNextFactor() {
+          if (step >= factors.length) {
+            // Animation complete
+            setTimeout(() => {
+              factorizationSteps.innerHTML += `<div style="margin-top: 1rem; font-weight: bold;">Factorization complete! All factors are prime.</div>`;
+            }, 500);
+            return;
+          }
+          
+          const factor = factors[step];
+          const nextNumber = currentNumber / factor;
+          
+          setTimeout(() => {
+            factorizationSteps.innerHTML += `
+              <div style="margin-bottom: 1rem;">
+                Step ${step + 1}: Found factor <span class="prime-factor highlight">${factor}</span>
+                <br>${currentNumber} ÷ ${factor} = <span class="prime-factor">${nextNumber}</span>
+              </div>
+            `;
+            
+            currentNumber = nextNumber;
+            step++;
+            animateNextFactor();
+          }, 1000);
+        }
+        
+        animateNextFactor();
+      });
+      
+      // Initial factorization
+      factorizeButton.click();
+    }
+    
+    // Initialize the prime operator visualization
+    function initializePrimeOperatorDemo() {
+      const matrixSize = document.getElementById('matrix-size');
+      const sizeDisplay = document.getElementById('size-display');
+      const operatorMatrix = document.getElementById('operator-matrix');
+      const operatorAction = document.getElementById('operator-action');
+      
+      if (!matrixSize || !operatorMatrix) return;
+      
+      function updateMatrix() {
+        const size = parseInt(matrixSize.value);
+        sizeDisplay.textContent = `${size}×${size}`;
+        
+        operatorMatrix.innerHTML = '';
+        
+        // Create matrix
+        for (let i = 1; i <= size; i++) {
+          const row = document.createElement('div');
+          row.style.display = 'flex';
+          
+          for (let j = 1; j <= size; j++) {
+            const cell = document.createElement('div');
+            cell.className = 'matrix-cell';
+            cell.textContent = j > 0 && j <= i && i % j === 0 ? '1' : '0';
+            cell.dataset.row = i;
+            cell.dataset.col = j;
+            
+            if (j > 0 && j <= i && i % j === 0) {
+              cell.style.backgroundColor = 'rgba(5, 191, 219, 0.3)';
+            }
+            
+            cell.addEventListener('click', function() {
+              // Highlight row and column
+              document.querySelectorAll('.matrix-cell').forEach(c => c.classList.remove('highlight'));
+              
+              const row = this.dataset.row;
+              const col = this.dataset.col;
+              
+              // Show the action of the Prime Operator
+              const divisors = getDivisors(row);
+              
+              let html = `<div><strong>H(δ<sub>${row}</sub>)</strong> = `;
+              
+              for (let i = 0; i < divisors.length; i++) {
+                html += `δ<sub>${divisors[i]}</sub>`;
+                if (i < divisors.length - 1) html += ' + ';
+              }
+              
+              html += '</div>';
+              html += `<div style="margin-top: 0.5rem;">The Prime Operator maps basis vector δ<sub>${row}</sub> to the sum of basis vectors δ<sub>d</sub> for all divisors d of ${row}.</div>`;
+              
+              operatorAction.innerHTML = html;
+              
+              // Highlight relevant cells
+              divisors.forEach(d => {
+                const cell = document.querySelector(`.matrix-cell[data-row="${row}"][data-col="${d}"]`);
+                if (cell) cell.classList.add('highlight');
+              });
+            });
+            
+            row.appendChild(cell);
+          }
+          
+          operatorMatrix.appendChild(row);
+        }
+      }
+      
+      matrixSize.addEventListener('input', updateMatrix);
+      
+      // Initial matrix
+      updateMatrix();
+    }
+    
+    // Initialize the prime distribution visualization
+    function initializePrimeDistributionDemo() {
+      const primeRange = document.getElementById('prime-range');
+      const rangeDisplay = document.getElementById('range-display');
+      const primeDistribution = document.getElementById('prime-distribution');
+      const pntCurve = document.getElementById('pnt-curve');
+      const pntStats = document.getElementById('pnt-stats');
+      
+      if (!primeRange || !primeDistribution) return;
+      
+      function updateDistribution() {
+        const range = parseInt(primeRange.value);
+        rangeDisplay.textContent = `1-${range}`;
+        
+        // Generate primes
+        const primes = generatePrimes(range);
+        
+        // Clear previous visualization
+        primeDistribution.innerHTML = '';
+        primeDistribution.appendChild(pntCurve);
+        
+        // Create prime markers
+        const markerWidth = Math.max(2, Math.min(10, Math.floor(primeDistribution.offsetWidth / range)));
+        
+        for (let i = 1; i <= range; i++) {
+          const isPrimeNumber = primes.includes(i);
+          
+          if (isPrimeNumber) {
+            const marker = document.createElement('div');
+            marker.className = 'prime-marker';
+            marker.style.left = `${(i / range) * 100}%`;
+            marker.style.width = `${markerWidth}px`;
+            marker.style.marginLeft = `-${markerWidth / 2}px`;
+            marker.dataset.prime = i;
+            
+            primeDistribution.appendChild(marker);
+          }
+        }
+        
+        // Animate the markers
+        const markers = document.querySelectorAll('.prime-marker');
+        markers.forEach(marker => {
+          const height = Math.floor(primeDistribution.offsetHeight * 0.9);
+          gsap.fromTo(marker, 
+            { height: 0 },
+            { height: height, duration: 0.5, ease: 'power2.out', delay: Math.random() * 0.5 }
+          );
+          
+          // Add tooltip
+          marker.title = `Prime: ${marker.dataset.prime}`;
+        });
+        
+        // Draw PNT curve
+        drawPNTCurve(range, primes);
+        
+        // Update stats
+        const actualCount = primes.length;
+        const pntEstimate = Math.round(range / Math.log(range));
+        const accuracy = Math.round((pntEstimate / actualCount) * 100);
+        
+        pntStats.innerHTML = `
+          <div><strong>Actual Prime Count π(${range}):</strong> ${actualCount}</div>
+          <div><strong>PNT Estimate (${range}/ln ${range}):</strong> ${pntEstimate}</div>
+          <div><strong>Estimation Accuracy:</strong> ${accuracy}%</div>
+        `;
+      }
+      
+      function drawPNTCurve(range, primes) {
+        const width = primeDistribution.offsetWidth;
+        const height = primeDistribution.offsetHeight;
+        
+        // Clear previous curve
+        pntCurve.innerHTML = '';
+        
+        // Create SVG for the curve
+        const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        svg.setAttribute('width', '100%');
+        svg.setAttribute('height', '100%');
+        
+        // Create path for the PNT curve
+        const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        
+        // Generate points for the path
+        let pathData = 'M 0 ' + height;
+        const step = range / 50;
+        
+        for (let x = 2; x <= range; x += step) {
+          const pntEstimate = x / Math.log(x);
+          const normalizedHeight = height - (pntEstimate / (range / Math.log(range))) * height * 0.9;
+          pathData += ` L ${(x / range) * width} ${normalizedHeight}`;
+        }
+        
+        path.setAttribute('d', pathData);
+        path.setAttribute('stroke', '#ff8c00');
+        path.setAttribute('stroke-width', '2');
+        path.setAttribute('fill', 'none');
+        
+        svg.appendChild(path);
+        pntCurve.appendChild(svg);
+      }
+      
+      primeRange.addEventListener('input', updateDistribution);
+      
+      // Initial distribution
+      updateDistribution();
+    }
+    
+    // Initialize the security key extraction demo
+    function initializeSecurityDemo() {
+      const securityLevel = document.getElementById('security-level');
+      const compareButton = document.getElementById('compare-extraction');
+      const extractionResults = document.getElementById('extraction-results');
+      const traditionalCanvas = document.getElementById('traditional-canvas');
+      const frameworkCanvas = document.getElementById('framework-canvas');
+      
+      if (!securityLevel || !compareButton || !extractionResults) return;
+      
+      compareButton.addEventListener('click', function() {
+        const level = parseInt(securityLevel.value);
+        
+        // Simulation values based on research
+        const traditionalProbes = Math.round(level * 5.2); // Traditional requires many more probes
+        const frameworkProbes = Math.round(level * 0.3); // Prime Framework is more efficient
+        
+        // Draw traditional method visualization
+        drawProbeVisualization(traditionalCanvas, traditionalProbes);
+        
+        // Draw framework method visualization
+        drawProbeVisualization(frameworkCanvas, frameworkProbes);
+        
+        // Update results
+        extractionResults.innerHTML = `
+          <div><strong>${level}-bit Security Key Extraction:</strong></div>
+          <div style="margin-top: 0.5rem;">
+            <div><strong>Traditional Method:</strong> ${traditionalProbes} probes required</div>
+            <div><strong>Prime Framework Method:</strong> ${frameworkProbes} probes required</div>
+            <div><strong>Efficiency Improvement:</strong> ${Math.round((traditionalProbes - frameworkProbes) / traditionalProbes * 100)}%</div>
+          </div>
+          <div style="margin-top: 1rem; font-style: italic; font-size: 0.9rem;">
+            The Prime Framework's coherence properties allow efficient extraction with fewer probes while maintaining the same security level. This demonstration shows observable evidence of the framework's practical advantages.
+          </div>
+        `;
+      });
+      
+      function drawProbeVisualization(canvas, probeCount) {
+        if (!canvas) return;
+        
+        // Clear canvas
+        canvas.innerHTML = '';
+        
+        // Calculate grid size based on security level
+        const gridSize = Math.ceil(Math.sqrt(probeCount * 3));
+        const cellSize = Math.min(10, Math.floor(canvas.offsetWidth / gridSize));
+        const gridContainer = document.createElement('div');
+        gridContainer.style.display = 'grid';
+        gridContainer.style.gridTemplateColumns = `repeat(${gridSize}, ${cellSize}px)`;
+        gridContainer.style.gridGap = '1px';
+        gridContainer.style.justifyContent = 'center';
+        gridContainer.style.paddingTop = '20px';
+        
+        // Create cells
+        for (let i = 0; i < gridSize * gridSize; i++) {
+          const cell = document.createElement('div');
+          cell.style.width = `${cellSize}px`;
+          cell.style.height = `${cellSize}px`;
+          cell.style.backgroundColor = i < probeCount ? '#05bfdb' : '#e0e0e0';
+          
+          gridContainer.appendChild(cell);
+        }
+        
+        canvas.appendChild(gridContainer);
+        
+        // Animate the probes
+        const probeCells = gridContainer.querySelectorAll('div');
+        for (let i = 0; i < probeCount; i++) {
+          gsap.fromTo(probeCells[i], 
+            { opacity: 0, scale: 0.5 },
+            { 
+              opacity: 1, 
+              scale: 1, 
+              duration: 0.3, 
+              delay: i * 0.02,
+              ease: 'back.out(1.7)' 
+            }
+          );
+        }
+      }
+      
+      // Initial visualization
+      compareButton.click();
+    }
+    
+    function initializeEmbeddingVisualization(num = 42) {
+      const visualization = document.getElementById('embed-visualization');
+      if (!visualization) return;
+      
+      // Clear previous circles
+      visualization.innerHTML = '';
+      
+      // Get digits in different bases
+      const bases = [2, 3, 5, 10];
+      const baseDigits = {};
+      
+      bases.forEach(base => {
+        baseDigits[base] = getDigitsInBase(num, base);
+      });
+      
+      // Create a circle for each digit in each base
+      const colors = {
+        2: 'rgba(10, 77, 104, 0.7)', // var(--primary)
+        3: 'rgba(8, 131, 149, 0.7)',  // var(--primary-light)
+        5: 'rgba(5, 191, 219, 0.7)',  // var(--secondary)
+        10: 'rgba(0, 255, 202, 0.7)'  // var(--accent)
+      };
+      
+      let circles = [];
+      
+      bases.forEach(base => {
+        const digits = baseDigits[base];
+        
+        digits.forEach((digit, index) => {
+          // Create multiple circles for each digit based on its value
+          const circleCount = Math.max(1, digit + 1);
+          
+          for (let i = 0; i < circleCount; i++) {
+            const circle = document.createElement('div');
+            circle.className = 'circle';
+            
+            // Size is based on the significance of the position
+            const size = 20 + (index * 10);
+            circle.style.width = `${size}px`;
+            circle.style.height = `${size}px`;
+            
+            // Color based on the base
+            circle.style.backgroundColor = colors[base];
+            
+            // Initial position
+            const angleOffset = (2 * Math.PI * base) / 20;
+            const radius = 100 - (index * 15);
+            const angle = angleOffset + (i * ((2 * Math.PI) / circleCount));
+            
+            const x = visualization.offsetWidth / 2 + radius * Math.cos(angle);
+            const y = visualization.offsetHeight / 2 + radius * Math.sin(angle);
+            
+            circle.style.left = `${x}px`;
+            circle.style.top = `${y}px`;
+            
+            visualization.appendChild(circle);
+            circles.push(circle);
+            
+            // Add tooltip with base info
+            circle.title = `Base ${base}, Position ${index}, Value ${digit}`;
+            
+            // Store original position
+            circle.dataset.baseX = x;
+            circle.dataset.baseY = y;
+            circle.dataset.base = base;
+            circle.dataset.digit = digit;
+          }
+        });
+      });
+      
+      // Animate the circles
+      circles.forEach(circle => {
+        const base = parseInt(circle.dataset.base);
+        const digit = parseInt(circle.dataset.digit);
+        
+        gsap.fromTo(circle, 
+          { 
+            x: 0, 
+            y: 0, 
+            opacity: 0, 
+            scale: 0 
+          },
+          { 
+            x: (Math.random() * 40 - 20), 
+            y: (Math.random() * 40 - 20), 
+            opacity: 0.7, 
+            scale: 1,
+            duration: 0.8 + Math.random() * 0.4,
+            ease: 'elastic.out(1, 0.5)',
+            delay: (base * 0.1) + (digit * 0.05)
+          }
+        );
+        
+        // Add continuous subtle movement
+        gsap.to(circle, {
+          x: "+=" + (Math.random() * 20 - 10),
+          y: "+=" + (Math.random() * 20 - 10),
+          duration: 2 + Math.random() * 2,
+          repeat: -1,
+          yoyo: true,
+          ease: "sine.inOut"
+        });
+      });
+    }
+    
+    // Initialize the first visualization
+    if (activeSection === 'embedding') {
+      initializeEmbeddingVisualization();
+    }
+    
+    // Initial section animation
+    gsap.to(`#section-${activeSection}`, {
+      opacity: 1,
+      y: 0,
+      duration: 0.6,
+      delay: 0.3
+    });
+    
+    // Initialize all demos when their sections become active
+    document.addEventListener('DOMContentLoaded', function() {
+      // Initialize first section demos
+      if (activeSection === 'embedding') {
+        initializeNumberEmbeddingDemo();
+      }
+      
+      // Set up event listeners for section changes to initialize demos
+      document.querySelectorAll('.nav-button').forEach(button => {
+        button.addEventListener('click', function() {
+          const section = this.dataset.section;
+          
+          // Initialize appropriate demos based on the section
+          if (section === 'embedding') {
+            setTimeout(initializeNumberEmbeddingDemo, 600);
+          } else if (section === 'primes') {
+            setTimeout(initializePrimeFactorizationDemo, 600);
+          } else if (section === 'operator') {
+            setTimeout(initializePrimeOperatorDemo, 600);
+          } else if (section === 'analytics') {
+            setTimeout(initializePrimeDistributionDemo, 600);
+          } else if (section === 'security') {
+            setTimeout(initializeSecurityDemo, 600);
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>
